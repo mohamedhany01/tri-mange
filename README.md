@@ -56,14 +56,110 @@ Managing clients, products, and payments manually can be time-consuming and erro
 
 ## Installation & Usage
 
+⚠️ **Warning**: The application is cross-platform, meaning it works for **web**, **Android**, and **iOS**. However, most development and testing have been focused on **Android**, so the web and iOS versions may not be fully optimized or thoroughly tested.
+
+⚠️ **Note**: The project is expected to work on **GNU/Linux** without issues. However, it has not been tested on **Windows** or **macOS**.
+
+---
+
 ### Prerequisites
 
-- **Node.js** (version 18 or higher)  
-- **Android Studio** for mobile development  
+Before you get started, ensure you have the following installed:
 
-### Installation
+- **Node.js** (version 18 or higher) – [Download Node.js](https://nodejs.org/)  
+  Alternatively, use [fnm](https://github.com/Schniz/fnm) to manage different Node.js versions on your machine.
 
-**In progress**
+- **Android Studio** for mobile development – [Download Android Studio](https://developer.android.com/studio)  
+  - **Android Studio Emulator** for running Expo projects – [Setup Guide](https://docs.expo.dev/workflow/android-studio-emulator/)
+
+- **Git** – [Download Git](https://git-scm.com/) for version control.
+
+---
+
+### Installation Steps
+
+1. **Clone the Repository**  
+   Open a terminal and run the following commands:
+
+   ```bash
+   git clone https://github.com/mohamedhany01/tri-mange.git
+   cd tri-mange
+   ```
+
+2. **Install Dependencies**  
+   Install the required packages using `npm`:
+
+   ```bash
+   npm install
+   ```
+
+3. **Set Up Environment Variables**  
+
+    Create a `.env` file in the root directory of your project and add your Firebase project settings. You can find these settings in the [Firebase Console](https://support.google.com/firebase/answer/7015592).
+
+    Add the following environment variables to the `.env` file:
+
+    ```env
+    EXPO_PUBLIC_FIREBASE_API_KEY=your-api-key
+    EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your-auth-domain
+    EXPO_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+    EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your-storage-bucket
+    EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+    EXPO_PUBLIC_FIREBASE_APP_ID=your-app-id
+    EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
+
+    # Proxy endpoint
+    EXPO_PUBLIC_PROXY_ENDPOINT=endpoint-link
+    ```
+
+    ---
+
+    ⚠️ **Security Note**  
+
+    Firebase is a serverless platform, and according to the [Firebase documentation](https://firebase.google.com/docs/projects/api-keys#general-info), it is safe to embed the following keys directly in your app:
+
+    - **API Key**  
+    - **Auth Domain**  
+    - **Storage Bucket**  
+    - **Messaging Sender ID**  
+    - **App ID**  
+    - **Measurement ID**  
+
+    Instead of securing these keys, Firebase Security Rules should be used to control access to your backend. For more details on implementing Firebase Security Rules, refer to the [Firebase Security Rules Guide](https://firebase.google.com/docs/rules).
+
+    ---
+
+    🔧 **Optional: Reverse Proxy Configuration**
+
+    To enhance security further, you can use a **Reverse Proxy** to handle requests and obscure your Firebase keys.
+
+    1. **Enable the Reverse Proxy** by setting the `EXPO_PUBLIC_PROXY_ENDPOINT` in your `.env` file and hardcoding the endpoint in the `fetchFirebaseAppKeys` function.
+
+    2. **Modify the following files** if you want to disable or customize the Reverse Proxy feature:
+
+    - **`utilities/apis/index.tsx`**  
+    - **`firebase/configuration.ts`**
+
+    If you decide to set up a standalone Reverse Proxy, initialize `EXPO_PUBLIC_PROXY_ENDPOINT` with your endpoint URL in the `.env` file.
+
+4. **Supported NPM Scripts**
+
+    The project includes several useful scripts to manage development, testing, and deployment. Below is a list of available scripts along with their descriptions.
+
+    | **Script**                  | **Description**                                                                                                         |
+    |------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+    | **`start`**                 | Starts the Expo development server for mobile and web platforms.                                                       |
+    | **`reset-project`**         | Runs a custom script to reset the project (useful for cleaning and resetting local changes).                           |
+    | **`android`**               | Runs the app on an Android emulator or physical device in development mode with debugging enabled.                     |
+    | **`android:release`**       | Builds and runs a release variant of the Android app. Logs can be viewed using `start:native:logging`.                 |
+    | **`ios`**                   | Runs the app on an iOS simulator or physical device.                                                                   |
+    | **`web`**                   | Starts the Expo development server for the web platform.                                                               |
+    | **`test`**                  | Runs all Jest tests in watch mode for continuous feedback during development.                                          |
+    | **`lint`**                  | Checks for code style issues using the linter.                                                                         |
+    | **`lint:fix`**              | Automatically fixes linting issues where possible.                                                                     |
+    | **`start:native:logging`**  | Displays native Android logs in real-time, useful for debugging native code and issues.                                |
+    | **`clear:cache`** *(Linux/WSL2 only)* | Clears the project cache using a custom script. Helps resolve caching issues during development.             |
+    | **`clear:build`**           | Cleans previous builds by running `expo prebuild --clean`. Use this after modifying `app.json` configurations.         |
 
 ---
 
