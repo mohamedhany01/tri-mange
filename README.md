@@ -173,4 +173,4 @@ Before you get started, ensure you have the following installed:
 
 ## To-Do / Roadmap
 
-**In progress**
+For detailed upcoming tasks, features, and improvements, please refer to the 🔗 [TriMange Project Board](https://github.com/users/mohamedhany01/projects/1/views/3)
