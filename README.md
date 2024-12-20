@@ -165,9 +165,86 @@ Before you get started, ensure you have the following installed:
 
 ## Design & Architecture
 
+The architecture of **TriMange** leverages **Firebase's NoSQL database** to manage key entities: **clients**, **products**, and **payments**. The design is simple yet powerful and scalable, taking advantage of NoSQL's flexibility. By using small documents and large collections, the database remains efficient and easy to scale.
+
+### Key Relationships
+
+- **Client ↔ Product**: One client can be associated with multiple products.
+- **Client ↔ Payment**: One client can make multiple payments.
+- **Product ↔ Payment**: One product can be linked to multiple payments.
+
+This approach keeps the NoSQL model **normalized** while maintaining clear relationships through **references** (storing `clientId` and `productId` in related documents). This design ensures easy querying and maintains data integrity.
+
 ### Project Structure
 
-**In progress**
+The project structure is organized to ensure maintainability and scalability. Here’s a high-level overview of the database schema:
+
+#### Database Diagram
+
+The diagram below illustrates the entities and their relationships:
+
+```mermaid
+erDiagram
+    CLIENT {
+        string id PK
+        string name
+        string phoneNumber
+        string note
+    }
+
+    PRODUCT {
+        string id PK
+        string name
+        string totalPrice
+        string created
+        string note
+        string clientId FK
+    }
+
+    PAYMENT {
+        string id PK
+        string amount
+        string created
+        string note
+        string productId FK
+        string clientId FK
+    }
+
+    CLIENT ||--o| PRODUCT : has
+    CLIENT ||--o| PAYMENT : makes
+    PRODUCT ||--o| PAYMENT : receives
+```
+
+### Design Considerations
+
+1. **Scalability**  
+   - By leveraging Firebase's NoSQL database, the app can scale efficiently by maintaining a structure with small, self-contained documents.
+   - Storing references (`clientId` and `productId`) instead of embedding full objects helps avoid data duplication and improves performance when querying large datasets.
+
+2. **Flexibility**  
+   - The design supports adding new fields to each entity without major schema changes.
+   - Documents can evolve independently, allowing for easy updates and feature enhancements.
+
+3. **Performance**  
+   - Query performance is optimized by keeping documents small and utilizing Firebase's indexing capabilities.
+   - Using **large collections** ensures that data retrieval remains efficient even as the number of clients, products, and payments grows.
+
+4. **Maintainability**  
+   - Clear relationships between entities make the database design intuitive and easier to maintain.
+   - The modular approach in the code structure ensures that each entity can be managed independently.
+
+### Code Organization
+
+- **Entities**  
+  - `clients`: Stores all client-related data.  
+  - `products`: Stores product details linked to specific clients.  
+  - `payments`: Stores payment records associated with clients and products.
+
+- **Utilities**  
+  - **API Handlers**: Located in `utilities/apis/index.tsx` to handle API interactions.  
+  - **Firebase Configuration**: Managed in `firebase/configuration.ts` for easy setup and updates.
+
+This design ensures that the app remains **robust, scalable, and easy to extend** as new features are added.
 
 ---
 
