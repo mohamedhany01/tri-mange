@@ -34,6 +34,7 @@ export async function fetchAllProducts(): Promise<Record<string, Product>> {
           id: doc.id,
           name: product.name,
           totalPrice: product.totalPrice,
+          isFullyPaid: product.isFullyPaid || false,
           type: "Product",
           note: product.note || "",
           created: product.created || "",
@@ -66,6 +67,7 @@ export async function addNewProduct(
 
     const productDocRef = await addDoc(productsCollection, {
       name: newProduct.name,
+      isFullyPaid: false,
       totalPrice: Number(newProduct.totalPrice),
       note: newProduct.note ?? "",
       created: newProduct.created,

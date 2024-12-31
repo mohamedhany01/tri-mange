@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { View, Text, StyleSheet } from "react-native";
 
@@ -10,9 +11,12 @@ import { useLocalization } from "@/context/Localization";
 import useSnackbar from "@/hooks/useSnackbar";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { selectClientById } from "@/store/selectors/client";
+import { selectPaymentsByProductId } from "@/store/selectors/payment";
 import { selectProductById } from "@/store/selectors/product";
 import { addOnePayment } from "@/store/slices/paymentSlice";
+import { updateOneProduct } from "@/store/slices/productSlice";
 import Payment from "@/types/Payment";
+import { getTotalPayments, resolveConcurrency } from "@/utilities/components";
 
 const AddProductForm = () => {
   const dispatch = useAppDispatch();
@@ -24,6 +28,7 @@ const AddProductForm = () => {
   }>();
   const client = useAppSelector(selectClientById(clientId));
   const product = useAppSelector(selectProductById(productId));
+  const currenPayments = useAppSelector(selectPaymentsByProductId(product.id));
 
   const defaultValues: Omit<Payment, "id"> = {
     amount: "",
@@ -43,24 +48,41 @@ const AddProductForm = () => {
 
   const addPayment: SubmitHandler<Omit<Payment, "id">> = async (data) => {
     try {
-      await dispatch(
-        addOnePayment({
-          amount: data.amount,
-          note: data.note,
-          type: "Payment",
-          created: new Date().toString(),
-          clientId: data.clientId,
-          productId: data.productId,
-        }),
-      ).unwrap();
+      const updateProductStatus = (isFullyPaid: boolean) =>
+        dispatch(
+          updateOneProduct({
+            id: product.id,
+            product: { ...product, isFullyPaid },
+          }),
+        ).unwrap();
+
+      const addPayment = (payment: Omit<Payment, "id">) =>
+        dispatch(addOnePayment(payment)).unwrap();
+
+      const isFullyPaid =
+        getTotalPayments(currenPayments, +data.amount) >=
+        Number(product.totalPrice);
+
+      const newPayment: Omit<Payment, "id"> = {
+        amount: data.amount,
+        note: data.note,
+        type: "Payment",
+        created: new Date().toString(),
+        clientId: data.clientId,
+        productId: data.productId,
+      };
+
+      await resolveConcurrency([
+        updateProductStatus(isFullyPaid),
+        addPayment(newPayment),
+      ]);
+
       router.replace({
         pathname: "/utilities/product/[id]",
-        params: {
-          id: product.id,
-        },
+        params: { id: product.id },
       });
     } catch (error) {
-      showSnackbar(`Error while adding new payment ${error}`, "error");
+      showSnackbar(`Error while processing payment: ${error}`, "error");
     }
   };
 

@@ -26,6 +26,7 @@ const AddProductForm = () => {
     name: "",
     note: "",
     totalPrice: "",
+    isFullyPaid: false,
     type: "Product",
     clientId: client.id,
   };
@@ -42,6 +43,7 @@ const AddProductForm = () => {
         addOneProduct({
           name: data.name,
           totalPrice: data.totalPrice,
+          isFullyPaid: data.isFullyPaid || false,
           note: data.note,
           type: "Product",
           created: new Date().toString(),
