@@ -24,3 +24,21 @@ export const selectProductById = (id: string) =>
     (state: RootState) => state.product.products,
     (products: Record<string, Product>) => products[id] || [],
   );
+
+export const selectCompleteProductsByClientId = (clientId: string) =>
+  createSelector(
+    (state: RootState) => state.product.products,
+    (products: Record<string, Product>) =>
+      Object.values(products).filter(
+        (product) => product.clientId === clientId && product.isFullyPaid,
+      ) || [],
+  );
+
+export const selectIncompleteProductsByClientId = (clientId: string) =>
+  createSelector(
+    (state: RootState) => state.product.products,
+    (products: Record<string, Product>) =>
+      Object.values(products).filter(
+        (product) => product.clientId === clientId && !product.isFullyPaid,
+      ) || [],
+  );
