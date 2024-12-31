@@ -1,6 +1,10 @@
 // localization.ts
 
 const en = {
+  ...{
+    complete: "Complete Products",
+    incomplete: "Incomplete Products",
+  },
   // app/(app)/_layout.tsx
   ...{
     statistics: "Statistics",
@@ -131,6 +135,10 @@ const en = {
 };
 
 const ar = {
+  ...{
+    complete: "منتجات مكتملة",
+    incomplete: "منتجات غير مكتملة",
+  },
   // app/(app)/_layout.tsx
   ...{
     statistics: "الإحصائيات",
