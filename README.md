@@ -196,6 +196,7 @@ erDiagram
         string id PK
         string name
         string totalPrice
+        boolean isFullyPaid
         string created
         string note
         string clientId FK
