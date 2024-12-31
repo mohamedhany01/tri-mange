@@ -1,13 +1,18 @@
 import { useRouter } from "expo-router";
+import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { useSelector } from "react-redux";
 
-// import ProductsList from '@/components/list/product/ProductsList';
+import { Accordion, AccordionItem } from "@/components/Accordion";
 import Entity from "@/components/Entity";
 import NoResult from "@/components/NoResult";
 import { useLocalization } from "@/context/Localization";
-import { selectProductsByClientId } from "@/store/selectors/product";
+import { useAppSelector } from "@/store";
+import {
+  selectCompleteProductsByClientId,
+  selectIncompleteProductsByClientId,
+} from "@/store/selectors/product";
 import Client from "@/types/Client";
+import { convertNumerals, NumeralSystem } from "@/utilities/localization";
 
 import ActionButtons from "./ActionButtons";
 import ClientInfo from "./ClientInfo";
@@ -25,8 +30,23 @@ const ClientStage = ({
   onDelete,
   onAddProduct,
 }: ClientStageProps) => {
-  const products = useSelector(selectProductsByClientId(client.id));
-  const { t } = useLocalization();
+  const completeProducts = useAppSelector(
+    selectCompleteProductsByClientId(client.id),
+  );
+  const incompleteProducts = useAppSelector(
+    selectIncompleteProductsByClientId(client.id),
+  );
+
+  const handleProductPress = (id: string) => {
+    router.push({
+      pathname: `/utilities/product/[id]`,
+      params: {
+        id,
+      },
+    });
+  };
+
+  const { t, locale } = useLocalization();
   const router = useRouter();
 
   return (
@@ -43,24 +63,43 @@ const ClientStage = ({
           </View>
 
           <ScrollView>
-            {products && products.length > 0 ? (
-              products.map((entity) => (
-                <Entity
-                  key={entity.id}
-                  entity={entity}
-                  onPress={() => {
-                    router.push({
-                      pathname: `/utilities/product/[id]`,
-                      params: {
-                        id: entity.id,
-                      },
-                    });
-                  }}
-                />
-              ))
-            ) : (
-              <NoResult />
-            )}
+            <Accordion>
+              <AccordionItem
+                title={`${t("complete")} (${convertNumerals(completeProducts.length, locale as NumeralSystem)})`}
+              >
+                {completeProducts.length > 0 ? (
+                  completeProducts.map((entity) => (
+                    <Entity
+                      key={entity.id}
+                      entity={entity}
+                      onPress={() => {
+                        handleProductPress(entity.id);
+                      }}
+                    />
+                  ))
+                ) : (
+                  <NoResult />
+                )}
+              </AccordionItem>
+
+              <AccordionItem
+                title={`${t("incomplete")}  (${convertNumerals(incompleteProducts.length, locale as NumeralSystem)})`}
+              >
+                {incompleteProducts.length > 0 ? (
+                  incompleteProducts.map((entity) => (
+                    <Entity
+                      key={entity.id}
+                      entity={entity}
+                      onPress={() => {
+                        handleProductPress(entity.id);
+                      }}
+                    />
+                  ))
+                ) : (
+                  <NoResult />
+                )}
+              </AccordionItem>
+            </Accordion>
           </ScrollView>
         </>
       ) : (

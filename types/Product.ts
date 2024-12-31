@@ -3,6 +3,7 @@ export default interface Product {
   id: string;
   name: string;
   totalPrice: string;
+  isFullyPaid: boolean;
   created?: string;
   note?: string;
   clientId: string;

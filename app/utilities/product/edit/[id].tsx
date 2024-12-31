@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { View, Text } from "react-native";
 
@@ -9,9 +10,11 @@ import SubmitButton from "@/components/form/SubmitButton";
 import { useLocalization } from "@/context/Localization";
 import useSnackbar from "@/hooks/useSnackbar";
 import { useAppDispatch, useAppSelector } from "@/store";
+import { selectPaymentsByProductId } from "@/store/selectors/payment";
 import { selectProductById } from "@/store/selectors/product";
 import { updateOneProduct } from "@/store/slices/productSlice";
 import Product from "@/types/Product";
+import { getTotalPayments, resolveConcurrency } from "@/utilities/components";
 
 const EditProductForm = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,6 +22,7 @@ const EditProductForm = () => {
 
   const defaultValues: Omit<Product, "id"> = {
     name: product.name,
+    isFullyPaid: product.isFullyPaid,
     totalPrice: product.totalPrice,
     type: "Product",
     note: product.note ?? "",
@@ -34,12 +38,23 @@ const EditProductForm = () => {
   const router = useRouter();
   const { t } = useLocalization();
   const { snackbar, showSnackbar, hideSnackbar } = useSnackbar();
+  const currenPayments = useAppSelector(selectPaymentsByProductId(product.id));
 
   const updateProduct: SubmitHandler<Omit<Product, "id">> = async (data) => {
     try {
-      await dispatch(
-        updateOneProduct({ id: product.id, product: { ...product, ...data } }),
-      );
+      const updateProductStatus = (isFullyPaid: boolean) =>
+        dispatch(
+          updateOneProduct({
+            id: product.id,
+            product: { ...product, ...data, isFullyPaid },
+          }),
+        ).unwrap();
+
+      const isFullyPaid =
+        getTotalPayments(currenPayments) >= Number(data.totalPrice);
+
+      await resolveConcurrency([updateProductStatus(isFullyPaid)]);
+
       router.back();
       // router.navigate({
       //   pathname: "/utilities/product/[id]",
