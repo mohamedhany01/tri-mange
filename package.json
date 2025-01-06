@@ -15,7 +15,9 @@
     "lint:fix": "eslint --fix .",
     "start:native:logging": "npx react-native log-android",
     "clear:cache": "chmod +x ./scripts/clear-cache.sh && ./scripts/clear-cache.sh",
-    "clear:build": "npx expo prebuild --clean"
+    "clear:build": "npx expo prebuild --clean",
+    "firebase:emulators": "cd firebase/test && npx firebase-tools emulators:start",
+    "firebase:firestore:tests": "cd firebase/test && jest --forceExit __tests__/firestore.spec.ts"
   },
   "jest": {
     "preset": "jest-expo"
