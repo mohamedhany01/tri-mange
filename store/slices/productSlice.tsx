@@ -1,11 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import {
-  addNewProduct,
-  deleteProduct,
-  fetchAllProducts,
-  updateProduct,
-} from "@/firebase/services/product";
+import ProductServices from "@/firebase/services/product";
 import Product from "@/types/Product";
 
 export interface ProductState {
@@ -17,31 +12,27 @@ const initialState: ProductState = {
 };
 
 export const getAllProducts = createAsyncThunk("get/all/products", async () => {
-  const products = await fetchAllProducts();
-  return products;
+  return await ProductServices.fetchAllProducts();
 });
 
 export const addOneProduct = createAsyncThunk(
   "add/one/product",
   async (product: Omit<Product, "id">) => {
-    const addedProduct = await addNewProduct(product);
-    return addedProduct;
+    return await ProductServices.addNewProduct(product);
   },
 );
 
 export const updateOneProduct = createAsyncThunk(
   "update/one/product",
   async ({ id, product }: { id: string; product: Partial<Product> }) => {
-    const updatedProduct = await updateProduct(id, product);
-    return updatedProduct;
+    return await ProductServices.updateProduct(id, product);
   },
 );
 
 export const deleteOneProduct = createAsyncThunk(
   "delete/one/product",
   async (productId: string) => {
-    const deletedId = await deleteProduct(productId);
-    return deletedId;
+    return await ProductServices.deleteProduct(productId);
   },
 );
 

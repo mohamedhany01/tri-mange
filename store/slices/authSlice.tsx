@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
-import { firebaseInitPromise } from "@/firebase/configuration";
+import FirebaseInitializer from "@/firebase/utilities/firebaseConfig";
 
 interface AuthState {
   isAuthenticated: boolean | undefined;
@@ -20,9 +20,15 @@ export const login = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const auth = (await firebaseInitPromise).auth;
+      const firebaseInitializer: FirebaseInitializer =
+        FirebaseInitializer.getInstance();
+      const { firebaseAuth } = await firebaseInitializer.getFirebaseUtilities();
 
-      const user = await signInWithEmailAndPassword(auth, email, password);
+      const user = await signInWithEmailAndPassword(
+        firebaseAuth,
+        email,
+        password,
+      );
       return !!user.user;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -32,7 +38,11 @@ export const login = createAsyncThunk(
 
 export const logoutThunk = createAsyncThunk("auth/logout", async () => {
   try {
-    await (await firebaseInitPromise).auth.signOut();
+    const firebaseInitializer: FirebaseInitializer =
+      FirebaseInitializer.getInstance();
+    const { firebaseAuth } = await firebaseInitializer.getFirebaseUtilities();
+
+    await firebaseAuth.signOut();
   } catch (error: any) {
     throw new Error(`Logout failed ${error.message}`);
   }
@@ -63,9 +73,11 @@ export const { setAuthenticationState } = authSlice.actions;
 export default authSlice.reducer;
 
 export const setupAuthListener = () => async (dispatch: any) => {
-  const auth = (await firebaseInitPromise).auth;
+  const firebaseInitializer: FirebaseInitializer =
+    FirebaseInitializer.getInstance();
+  const { firebaseAuth } = await firebaseInitializer.getFirebaseUtilities();
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(firebaseAuth, (user) => {
     const isAuthenticated = !!user;
     dispatch(setAuthenticationState(isAuthenticated));
   });
