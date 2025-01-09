@@ -14,7 +14,12 @@ import {
   getFirestore,
 } from "firebase/firestore";
 
-import { getAppMode, PlatformDetector } from "@/utilities/environment";
+import {
+  AppMode,
+  getAppMode,
+  isTesting,
+  PlatformDetector,
+} from "@/utilities/environment";
 
 export const FIREBASE_STORAGE_KEY = "FirebaseKeys";
 
@@ -26,7 +31,7 @@ const FIREBASE_SERVICES: Record<string, string> = {
 const FIREBASE_SERVICES_MAP: Record<string, Record<string, string>> = {
   [FIREBASE_SERVICES.AUTH]: {
     web: "http://127.0.0.1:9099",
-    android: "http://127.0.0.1:9099",
+    android: "http://10.0.2.2:9099",
   },
   [FIREBASE_SERVICES.STORE]: {
     web: "127.0.0.1",
@@ -82,6 +87,7 @@ class FirebaseInitializer {
       connectAuthEmulator(
         firebaseAuth,
         FIREBASE_SERVICES_MAP[FIREBASE_SERVICES.AUTH][platform],
+        { disableWarnings: true },
       );
       connectFirestoreEmulator(
         firebaseStore,
@@ -102,7 +108,8 @@ class FirebaseInitializer {
 
   public async getFirebaseUtilities() {
     const firebaseKeys = await this.configurations.getKeys();
-    const makeUtilities = this.utilitiesMaker[this.mode];
+    const makeUtilities =
+      this.utilitiesMaker[isTesting() ? AppMode.Development : this.mode];
 
     if (!makeUtilities) {
       throw new Error(`Unsupported mode: ${this.mode}`);
@@ -114,9 +121,12 @@ class FirebaseInitializer {
 
 class FirebaseConfiguration {
   private readonly mode: string;
-  private readonly keysPromise: Promise<FirebaseKeys>;
+  private readonly keysPromise: FirebaseKeys | Promise<FirebaseKeys>;
 
-  private readonly keysMaker: Record<string, () => Promise<FirebaseKeys>> = {
+  private readonly keysMaker: Record<
+    string,
+    () => FirebaseKeys | Promise<FirebaseKeys>
+  > = {
     production: async () => {
       const storedKeys = await getItemAsync(FIREBASE_STORAGE_KEY);
       const APIEndpoint = "<endpoint>"; // Replace with actual endpoint
@@ -146,16 +156,16 @@ class FirebaseConfiguration {
       return JSON.parse(storedKeys) as FirebaseKeys;
     },
 
-    development: async () => {
+    development: () => {
       return {
-        apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY ?? "",
-        authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
-        projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? "",
-        storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
+        apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY!,
+        authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+        projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID!,
+        storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET!,
         messagingSenderId:
-          process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
-        appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID ?? "",
-        measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID ?? "",
+          process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+        appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID!,
+        measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID!,
       };
     },
   };
@@ -165,15 +175,16 @@ class FirebaseConfiguration {
     this.keysPromise = this.initKeys(mode);
   }
 
-  private initKeys(mode: string): Promise<FirebaseKeys> {
-    const keysMakerFn = this.keysMaker[mode];
+  private initKeys(mode: string): FirebaseKeys | Promise<FirebaseKeys> {
+    const keysMakerFn =
+      this.keysMaker[isTesting() ? AppMode.Development : mode];
     if (!keysMakerFn) {
       throw new Error(`Unsupported mode: ${mode}`);
     }
     return keysMakerFn();
   }
 
-  public getKeys(): Promise<FirebaseKeys> {
+  public getKeys(): FirebaseKeys | Promise<FirebaseKeys> {
     return this.keysPromise;
   }
 }
