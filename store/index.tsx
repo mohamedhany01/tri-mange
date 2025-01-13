@@ -6,14 +6,17 @@ import clientReducer from "./slices/clientSlice";
 import paymentReducer from "./slices/paymentSlice";
 import productReducer from "./slices/productSlice";
 
-export const store = configureStore({
-  reducer: {
-    client: clientReducer,
-    product: productReducer,
-    payment: paymentReducer,
-    auth: authReducer,
-  },
-});
+export const getNewStore = () =>
+  configureStore({
+    reducer: {
+      client: clientReducer,
+      product: productReducer,
+      payment: paymentReducer,
+      auth: authReducer,
+    },
+  });
+
+export const store = getNewStore();
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;

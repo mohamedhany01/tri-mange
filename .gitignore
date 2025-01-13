@@ -39,3 +39,10 @@ app-example
 
 # Env
 .env
+
+# Firebase
+*.log
+firestore-coverage.html
+
+# You can create it again using `npx firebase-tools use --add`
+.firebaserc

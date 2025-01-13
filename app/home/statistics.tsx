@@ -184,7 +184,6 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   statBoxHeader: {
-    backgroundColor: I18nManager.isRTL ? "red" : "green",
     width: "100%",
     display: "flex",
     flexDirection: "row",

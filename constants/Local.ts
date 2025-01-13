@@ -129,6 +129,7 @@ const en = {
     passwordPlaceholderText: "Password",
     passwordRequired: "Password is required",
     loginButtonText: "Login",
+    loginSuccessMessage: "Login Successfully",
   },
   // components/screen/product/Stage.tsx
   ...{},
@@ -263,6 +264,7 @@ const ar = {
     passwordPlaceholderText: "كلمة المرور",
     passwordRequired: "كلمة المرور مطلوبة",
     loginButtonText: "تسجيل الدخول",
+    loginSuccessMessage: "دخول ناجح",
   },
 };
 

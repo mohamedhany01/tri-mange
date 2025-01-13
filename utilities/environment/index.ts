@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 /**
  * Enum representing the different application modes.
  */
@@ -57,6 +58,59 @@ export function isTesting(): boolean {
  */
 export function isProduction(): boolean {
   return getAppMode() === AppMode.Production;
+}
+
+export class PlatformDetector {
+  // Private constructor to prevent instantiation
+  private constructor() {}
+
+  // Detects if the platform is iOS
+  public static isIOS(): boolean {
+    return Platform.OS === "ios";
+  }
+
+  // Detects if the platform is Android
+  public static isAndroid(): boolean {
+    return Platform.OS === "android";
+  }
+
+  // Detects if the platform is a Web browser
+  public static isWeb(): boolean {
+    return Platform.OS === "web";
+  }
+
+  // Returns the current platform name
+  public static getPlatformName(): string {
+    return Platform.OS; // 'ios', 'android', or 'web'
+  }
+
+  // Determines if the platform is a TV
+  public static isTV(): boolean {
+    return Platform.isTV;
+  }
+
+  // Checks if the platform version is greater than or equal to a specific version
+  public static isVersionOrAbove(version: number): boolean {
+    const platformVersion = parseInt(Platform.Version as string, 10);
+    return platformVersion >= version;
+  }
+
+  // Utility to run platform-specific logic
+  public static runPlatformSpecific<T>(
+    iosLogic: () => T,
+    androidLogic: () => T,
+    webLogic?: () => T,
+  ): T {
+    if (this.isIOS()) {
+      return iosLogic();
+    } else if (this.isAndroid()) {
+      return androidLogic();
+    } else if (this.isWeb() && webLogic) {
+      return webLogic();
+    } else {
+      throw new Error("Unsupported platform");
+    }
+  }
 }
 
 export const CURRENT_APP_MODE = getAppMode();

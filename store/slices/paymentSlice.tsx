@@ -1,11 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import {
-  addNewPayment,
-  deletePayment,
-  fetchAllPayments,
-  updatePayment,
-} from "@/firebase/services/payment";
+import PaymentServices from "@/firebase/services/payment";
 import Payment from "@/types/Payment";
 
 export interface PaymentState {
@@ -17,31 +12,27 @@ const initialState: PaymentState = {
 };
 
 export const getAllPayments = createAsyncThunk("get/all/payments", async () => {
-  const payments = await fetchAllPayments();
-  return payments;
+  return await PaymentServices.fetchAllPayments();
 });
 
 export const addOnePayment = createAsyncThunk(
   "add/one/payment",
   async (payment: Omit<Payment, "id">) => {
-    const addedPayment = await addNewPayment(payment);
-    return addedPayment;
+    return await PaymentServices.addNewPayment(payment);
   },
 );
 
 export const updateOnePayment = createAsyncThunk(
   "update/one/payment",
   async ({ id, payment }: { id: string; payment: Partial<Payment> }) => {
-    const updatedPayment = await updatePayment(id, payment);
-    return updatedPayment;
+    return await PaymentServices.updatePayment(id, payment);
   },
 );
 
 export const deleteOnePayment = createAsyncThunk(
   "delete/one/payment",
   async (paymentId: string) => {
-    const deletedId = await deletePayment(paymentId);
-    return deletedId;
+    return await PaymentServices.deletePayment(paymentId);
   },
 );
 
@@ -98,7 +89,6 @@ export const paymentSlice = createSlice({
   },
 });
 
-// Export the actions and reducer
 export const { removePaymentsUsingProductId, removePaymentsUsingClientId } =
   paymentSlice.actions;
 export default paymentSlice.reducer;

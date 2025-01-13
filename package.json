@@ -10,15 +10,35 @@
     "android:release": "npx expo run:android --variant Release",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "test": "jest --watchAll",
+    "test": "jest",
     "lint": "expo lint",
     "lint:fix": "eslint --fix .",
     "start:native:logging": "npx react-native log-android",
     "clear:cache": "chmod +x ./scripts/clear-cache.sh && ./scripts/clear-cache.sh",
-    "clear:build": "npx expo prebuild --clean"
+    "clear:build": "npx expo prebuild --clean",
+    "firebase:emulators": "cd firebase/test && npx firebase-tools emulators:start",
+    "firebase:firestore:tests": "cd firebase/test && jest --forceExit __tests__/firestore.spec.ts"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)||react-redux|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg)"
+    ],
+    "modulePathIgnorePatterns": [
+      "/firebase"
+    ],
+    "setupFiles": [
+      "<rootDir>/jestSetup.js"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node",
+      "d.ts"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
@@ -32,12 +52,14 @@
     "date-fns": "^4.1.0",
     "expo": "~52.0.9",
     "expo-blur": "~14.0.1",
+    "expo-build-properties": "~0.13.1",
     "expo-constants": "~17.0.3",
     "expo-font": "~13.0.1",
     "expo-haptics": "~14.0.0",
     "expo-linking": "~7.0.3",
     "expo-localization": "~16.0.0",
     "expo-router": "~4.0.7",
+    "expo-secure-store": "~14.0.0",
     "expo-splash-screen": "~0.29.12",
     "expo-status-bar": "~2.0.0",
     "expo-symbols": "~0.2.0",
@@ -57,16 +79,14 @@
     "react-native-screens": "~4.1.0",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.4",
-    "react-redux": "^9.1.2",
-    "expo-secure-store": "~14.0.0",
-    "expo-build-properties": "~0.13.1"
+    "react-redux": "^9.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@react-native-community/cli": "^15.1.2",
+    "@testing-library/react-native": "^13.0.0",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
-    "@types/react-test-renderer": "^18.3.0",
     "eslint": "^8.57.1",
     "eslint-config-expo": "^8.0.1",
     "eslint-config-prettier": "^9.1.0",
@@ -75,7 +95,6 @@
     "jest": "^29.2.1",
     "jest-expo": "~52.0.2",
     "prettier": "^3.3.3",
-    "react-test-renderer": "18.3.1",
     "typescript": "^5.3.3"
   },
   "private": true

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import {
   View,
@@ -17,6 +17,7 @@ import { login } from "@/store/slices/authSlice";
 interface LoginData {
   email: string;
   password: string;
+  status: boolean;
 }
 
 const LoginScreen = () => {
@@ -25,15 +26,19 @@ const LoginScreen = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
+    setValue,
   } = useForm<LoginData>();
 
   const dispatch = useAppDispatch();
   const { t } = useLocalization();
 
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   const onSubmit: SubmitHandler<LoginData> = async ({ email, password }) => {
     try {
-      // Attempt to login
       await dispatch(login({ email, password })).unwrap();
+      setSuccessMessage(t("loginSuccessMessage"));
+      setValue("status", true);
     } catch (error: any) {
       // If login fails, set form error based on the response
       if (error.message === "INVALID_EMAIL") {
@@ -42,7 +47,7 @@ const LoginScreen = () => {
         setError("password", { message: t("invalidPasswordError") });
       } else {
         // General error message for unexpected errors
-        setError("root", { message: t("unexpectedError") });
+        setError("root", { message: error });
       }
     }
   };
@@ -93,6 +98,10 @@ const LoginScreen = () => {
           <Text style={styles.errorText}>{errors.root.message}</Text>
         )}
 
+        {successMessage && (
+          <Text style={styles.successText}>{t("loginSuccessMessage")}</Text>
+        )}
+
         {isSubmitting ? (
           <ActivityIndicator size="large" color="#2196F3" />
         ) : (
@@ -132,5 +141,11 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginBottom: 8,
+  },
+  successText: {
+    color: "green",
+    marginBottom: 12,
+    fontSize: 16,
+    textAlign: "center",
   },
 });
