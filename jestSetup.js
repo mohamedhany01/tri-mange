@@ -5,3 +5,10 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 jest.mock("@expo/vector-icons", () => ({
   Ionicons: "",
 }));
+
+jest.mock("@expo/vector-icons/Ionicons", () => {
+  return {
+    __esModule: true,
+    default: () => null,
+  };
+});
