@@ -69,8 +69,9 @@ Before you get started, ensure you have the following installed:
 - **Node.js** (version 18 or higher) – [Download Node.js](https://nodejs.org/)  
   Alternatively, use [fnm](https://github.com/Schniz/fnm) to manage different Node.js versions on your machine.
 
-- **Android Studio** for mobile development – [Download Android Studio](https://developer.android.com/studio)  
+- **Android Studio** for mobile development – [Download Android Studio](https://developer.android.com/studio)
   - **Android Studio Emulator** for running Expo projects – [Setup Guide](https://docs.expo.dev/workflow/android-studio-emulator/)
+  - **Environment Setup** for integrating Expo with dev tools (Node.js, Android Studio...etc) - [Setup Guide](https://reactnative.dev/docs/set-up-your-environment)
 
 - **Git** – [Download Git](https://git-scm.com/) for version control.
 
@@ -146,20 +147,20 @@ Before you get started, ensure you have the following installed:
 
     The project includes several useful scripts to manage development, testing, and deployment. Below is a list of available scripts along with their descriptions.
 
-    | **Script**                  | **Description**                                                                                                         |
-    |------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-    | **`start`**                 | Starts the Expo development server for mobile and web platforms.                                                       |
-    | **`reset-project`**         | Runs a custom script to reset the project (useful for cleaning and resetting local changes).                           |
-    | **`android`**               | Runs the app on an Android emulator or physical device in development mode with debugging enabled.                     |
-    | **`android:release`**       | Builds and runs a release variant of the Android app. Logs can be viewed using `start:native:logging`.                 |
-    | **`ios`**                   | Runs the app on an iOS simulator or physical device.                                                                   |
-    | **`web`**                   | Starts the Expo development server for the web platform.                                                               |
-    | **`test`**                  | Runs all Jest tests in watch mode for continuous feedback during development.                                          |
-    | **`lint`**                  | Checks for code style issues using the linter.                                                                         |
-    | **`lint:fix`**              | Automatically fixes linting issues where possible.                                                                     |
-    | **`start:native:logging`**  | Displays native Android logs in real-time, useful for debugging native code and issues.                                |
-    | **`clear:cache`** *(Linux/WSL2 only)* | Clears the project cache using a custom script. Helps resolve caching issues during development.             |
-    | **`clear:build`**           | Cleans previous builds by running `expo prebuild --clean`. Use this after modifying `app.json` configurations.         |
+    | **Script**                  | **Description**                                                                                                                                                           |
+    |------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | **`start`**                 | Starts the Expo development server for mobile and web platforms.                                                                                                          |
+    | **`reset-project`**         | Runs a custom script to reset the project (useful for cleaning and resetting local changes).                                                                              |
+    | **`android`**               | Runs the app on an Android emulator or physical device in development mode with debugging enabled.                                                                        |
+    | **`android:release`**       | Builds and runs a [release variant](https://docs.expo.dev/guides/local-app-development/) of the Android app. Logs can be viewed using `start:native:logging`.         |
+    | **`ios`**                   | Runs the app on an iOS simulator or physical device.                                                                                                                      |
+    | **`web`**                   | Starts the Expo development server for the web platform.                                                                                                                  |
+    | **`test`**                  | Runs all Jest tests in watch mode for continuous feedback during development.                                                                                             |
+    | **`lint`**                  | Checks for code style issues using the linter.                                                                                                                            |
+    | **`lint:fix`**              | Automatically fixes linting issues where possible.                                                                                                                        |
+    | **`start:native:logging`**  | Displays native Android logs in real-time, useful for debugging native code and issues.                                                                                   |
+    | **`clear:cache`** *(Linux/WSL2 only)* | Clears the project cache using a custom script. Helps resolve caching issues during development.                                                                |
+    | **`clear:build`**           | Cleans previous builds by running `expo prebuild --clean`. Use this after modifying `app.json` configurations.                                                            |
 
 ---
 
